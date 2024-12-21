@@ -29,16 +29,15 @@ public class SecurityConfig {
                     httpForm.loginPage("/login").permitAll();
                     httpForm.defaultSuccessUrl("/home");
 
+                }).authorizeHttpRequests(registry ->{
+                    registry.requestMatchers("/signup","/css/**","/js/**").permitAll();
+                    registry.anyRequest().authenticated();
                 }).logout(logout -> {
                     logout.logoutUrl("/logout")
                             .logoutSuccessUrl("/login?logout")
                             .invalidateHttpSession(true)
                             .clearAuthentication(true)
                             .permitAll();
-                })
-                .authorizeHttpRequests(registry ->{
-                    registry.requestMatchers("/signup","/css/**","/js/**").permitAll();
-                    registry.anyRequest().authenticated();
                 })
                 .authenticationProvider(authenticationService)
                 .build();
