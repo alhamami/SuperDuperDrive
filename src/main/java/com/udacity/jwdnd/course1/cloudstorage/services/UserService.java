@@ -20,7 +20,7 @@ public class UserService {
     }
 
     public boolean isUsernameAvailable(String username) {
-        return userMapper.getUser(username) == null;
+        return userMapper.getUserByUsername(username) == null;
     }
 
     public int createUser(User user) {
@@ -34,6 +34,10 @@ public class UserService {
         String hashedPassword = hashService.getHashedValue(user.getPassword(), encodedSalt);
 
         return userMapper.insert(new User(null, user.getUsername(), encodedSalt, hashedPassword, user.getFirstName(), user.getLastName()));
+    }
+
+    public User getUserByUsername(String username) {
+        return userMapper.getUserByUsername(username);
     }
 
 }

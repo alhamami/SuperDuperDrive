@@ -27,10 +27,10 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(httpForm ->{
                     httpForm.loginPage("/login").permitAll();
-                    httpForm.defaultSuccessUrl("/home");
+                    httpForm.defaultSuccessUrl("/home", true);
 
                 }).authorizeHttpRequests(registry ->{
-                    registry.requestMatchers("/signup","/css/**","/js/**").permitAll();
+                    registry.requestMatchers("/signup","/css/**","/js/**", "/home/file/download/**").permitAll();
                     registry.anyRequest().authenticated();
                 }).logout(logout -> {
                     logout.logoutUrl("/logout")

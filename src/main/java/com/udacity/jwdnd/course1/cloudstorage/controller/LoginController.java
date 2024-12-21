@@ -9,20 +9,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 
 @Controller
+
 public class LoginController {
 
 
-    AuthenticationService authenticationService;
-
-    public LoginController(AuthenticationService authenticationService) {
-        this.authenticationService = authenticationService;
-    }
-
-    @GetMapping("/login")
-    public String getLogin() {
+    @GetMapping ("/login")
+    public String login() {
         return "login";
     }
+
+
 }
