@@ -7,6 +7,15 @@ public class User {
     private String salt;
     private String password;
 
+    public User(Integer userid, String username, String salt, String password, String firstName, String lastName) {
+        this.userid = userid;
+        this.username = username;
+        this.salt = salt;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
     public Integer getUserid() {
         return userid;
     }
