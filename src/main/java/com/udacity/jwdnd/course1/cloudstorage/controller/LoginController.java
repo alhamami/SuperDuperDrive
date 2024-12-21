@@ -22,17 +22,7 @@ public class LoginController {
     }
 
     @GetMapping("/login")
-    public String getLogin(Model model) {
-        return "login";
-    }
-
-    @PostMapping("/login")
-    public String postLogin(Authentication authentication, Model model) {
-
-        if(authenticationService.authenticate(authentication) == null){
-            model.addAttribute("signInError", true);
-        }
-
+    public String getLogin() {
         return "login";
     }
 }
