@@ -1,7 +1,9 @@
 package com.udacity.jwdnd.course1.cloudstorage.controller;
 
 import com.udacity.jwdnd.course1.cloudstorage.model.File;
+import com.udacity.jwdnd.course1.cloudstorage.model.Note;
 import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
+import com.udacity.jwdnd.course1.cloudstorage.services.NoteService;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -20,14 +22,16 @@ import java.io.IOException;
 public class FileController {
 
     private final FileService fileService;
+    private final NoteService noteService;
 
-    public FileController(FileService fileService) {
+    public FileController(FileService fileService, NoteService noteService) {
         this.fileService = fileService;
+        this.noteService = noteService;
     }
 
 
     @GetMapping("/download/{fileId}")
-    public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable("fileId") Integer fileId, Authentication authentication, Model model){
+    public ResponseEntity<ByteArrayResource> downloadFile(@ModelAttribute("saveNote") Note saveNote, @PathVariable("fileId") Integer fileId, Authentication authentication, Model model){
         File file = fileService.getFileByFileId(fileId, authentication.getName());
 
         ByteArrayResource downloadFile = new ByteArrayResource(file.getFileData());
@@ -39,7 +43,7 @@ public class FileController {
 
 
     @PostMapping("/upload")
-    public String uploadFile(@RequestParam("fileUpload") MultipartFile uploadFile, Authentication authentication, Model model) throws IOException {
+    public String uploadFile(@ModelAttribute("saveNote") Note saveNote, @RequestParam("fileUpload") MultipartFile uploadFile, Authentication authentication, Model model) throws IOException {
 
         String fileSaveStatus = null;
 
@@ -55,23 +59,28 @@ public class FileController {
             fileSaveStatus = "File already exists";
         }
 
-        model.addAttribute("files", fileService.getAllFiles(authentication.getName()));
         model.addAttribute("fileSaveStatus", fileSaveStatus);
+
+        model.addAttribute("notes", noteService.getAllNotes(authentication.getName()));
+        model.addAttribute("files", fileService.getAllFiles(authentication.getName()));
+
 
         return "home";
     }
 
 
     @GetMapping("/delete/{fileId}")
-    public String deleteFile(@PathVariable("fileId") Integer fileId, Authentication authentication, Model model){
+    public String deleteFile(@ModelAttribute("saveNote") Note saveNote, @PathVariable("fileId") Integer fileId, Authentication authentication, Model model){
 
-        boolean isFileDleted = fileService.deleteFile(fileId, authentication.getName());
+        boolean isFileDeleted = fileService.deleteFile(fileId, authentication.getName());
 
-        if(!isFileDleted){
+        if(!isFileDeleted){
             model.addAttribute("fileSaveStatus", "an error occurred while deleting the file");
         }
 
+        model.addAttribute("notes", noteService.getAllNotes(authentication.getName()));
         model.addAttribute("files", fileService.getAllFiles(authentication.getName()));
+
         return "home";
 
 
