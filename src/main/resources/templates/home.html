@@ -25,7 +25,7 @@
                 </nav>
                 <div class="tab-content" id="nav-tabContent">
                     <div class="tab-pane fade show active" id="nav-files" role="tabpanel" aria-labelledby="nav-files-tab">
-                        <form  th:action="@{'/home/upload'}" enctype="multipart/form-data" method="POST">
+                        <form  th:action="@{'/home/file/upload'}" enctype="multipart/form-data" method="POST">
                             <div class="container">
                                 <div class="row" style="margin: 1em;">
                                     <div class="col-sm-2">
@@ -36,6 +36,13 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <button type="submit" class="btn btn-dark" id="uploadButton">Upload</button>
+                                    </div>
+                                </div>
+                                <div class="row" style="margin: 1em;">
+                                    <div class="col-sm-5">
+                                        <div th:if="${fileSaveStatus}"  class="alert alert-danger" style="text-align: center" th:text="${fileSaveStatus}">
+
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -53,7 +60,7 @@
                                     <td>
                                         <a th:href="@{/home/file/download/{fileId}(fileId=${file.fileId})}" class="btn btn-success">View</a>
 
-                                        <a  class="btn btn-danger" >Delete</a>
+                                        <a th:href="@{/home/file/delete/{fileId}(fileId=${file.fileId})}" class="btn btn-danger" >Delete</a>
                                     </td>
                                     <th scope="row" th:text="${file.fileName}"></th>
                                 </tr>

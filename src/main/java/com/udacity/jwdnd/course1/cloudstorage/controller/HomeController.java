@@ -28,44 +28,8 @@ public class HomeController {
     @GetMapping()
     public String home(Authentication authentication, Model model){
 
-
         model.addAttribute("files", fileService.getAllFiles(authentication.getName()));
-
-
         return "home";
     }
-
-    @GetMapping("/file/download/{fileId}")
-    public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable("fileId") Integer fileId, Authentication authentication, Model model){
-        File file = fileService.getFileByFileId(fileId);
-
-        ByteArrayResource resource = new ByteArrayResource(file.getFileData());
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFileName() + "\"")
-                .contentLength(file.getFileData().length)
-                .body(resource);
-
-    }
-
-
-    @PostMapping("/upload")
-    public String uploadFile(@RequestParam("fileUpload") MultipartFile uploadFile, Authentication authentication, Model model) throws IOException {
-
-        boolean isFileSaved = fileService.saveFile(uploadFile, authentication.getName());
-
-
-        if(!isFileSaved){
-            model.addAttribute("isFileSaved", true);
-        }
-
-        model.addAttribute("files", fileService.getAllFiles(authentication.getName()));
-
-        return "home";
-
-
-
-    }
-
 
 }

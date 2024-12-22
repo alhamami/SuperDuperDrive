@@ -23,16 +23,16 @@ public class FileService {
     }
 
 
-    public boolean isFileExist(String fileName) {
-        return fileMapper.getFileByFileName(fileName) != null;
+    public boolean isFileExist(String fileName, String username) {
+        return fileMapper.getFileByFileName(fileName, username) != null;
     }
 
     public List<File> getAllFiles(String username){
         return fileMapper.getAllFiles(username);
     }
 
-    public File getFileByFileId(Integer fileId){
-        return fileMapper.getFileByFileId(fileId);
+    public File getFileByFileId(Integer fileId,  String username){
+        return fileMapper.getFileByFileId(fileId, username);
     }
 
     public boolean saveFile(MultipartFile file, String username) throws IOException {
@@ -45,6 +45,13 @@ public class FileService {
 
         return savedFile > 0;
 
+    }
+
+    public boolean deleteFile(Integer fileId, String username){
+
+        int deletedFile = fileMapper.deleteFile(fileId, username);
+
+        return deletedFile > 0;
     }
 
 
