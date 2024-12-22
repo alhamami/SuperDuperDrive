@@ -41,7 +41,6 @@
                                 <div class="row" style="margin: 1em;">
                                     <div class="col-sm-5">
                                         <div th:if="${fileSaveStatus}"  class="alert alert-danger" style="text-align: center" th:text="${fileSaveStatus}">
-
                                         </div>
                                     </div>
                                 </div>
@@ -72,6 +71,10 @@
                         <button style="margin: 0.25em;" type="button" class="btn btn-info float-right" onclick="showNoteModal()">
                             + Add a New Note
                         </button>
+                        <div class="col-sm-5">
+                            <div th:if="${noteStatus}"  class="alert alert-danger" style="text-align: center" th:text="${noteStatus}">
+                            </div>
+                        </div>
 
                         <div class="table-responsive">
                             <table class="table table-striped" id="userTable">
@@ -83,13 +86,13 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
+                                <tr th:each="note : ${notes}">
                                         <td>
-                                            <button type="button" class="btn btn-success">Edit</button>
-                                            <a class="btn btn-danger">Delete</a>
+                                            <button type="button" class="btn btn-success"  th:onclick="showNoteModal([[${note.noteid}]], [[${note.noteTitle}]], [[${note.noteDescription}]])">Edit</button>
+                                            <a th:href="@{/home/note/delete/{noteid}(noteid=${note.noteid})}"  class="btn btn-danger">Delete</a>
                                         </td>
-                                        <th scope="row">Example Note Title</th>
-                                        <td>Example Note Description </td>
+                                        <th scope="row" th:text="${note.noteTitle}"></th>
+                                        <td th:text="${note.noteDescription}"></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -105,15 +108,15 @@
                                         </button>
                                     </div>
                                     <div class="modal-body">
-                                        <form action="#" method="POST">
-                                            <input type="hidden" name="noteId" id="note-id">
+                                        <form th:action="@{'/home/note/add'}" th:object="${saveNote}" method="POST">
+                                            <input type="hidden" name="noteId" id="note-id" th:field="${saveNote.noteid}">
                                             <div class="form-group">
                                                 <label for="note-title" class="col-form-label">Title</label>
-                                                <input type="text" name= "noteTitle" class="form-control" id="note-title" maxlength="20" required>
+                                                <input type="text" name= "noteTitle" class="form-control" id="note-title" th:field="${saveNote.noteTitle}" maxlength="20" required>
                                             </div>
                                             <div class="form-group">
                                                 <label for="note-description" class="col-form-label">Description</label>
-                                                <textarea class="form-control" name="noteDescription" id="note-description" rows="5" maxlength="1000" required></textarea>
+                                                <textarea class="form-control" name="noteDescription" id="note-description" th:field="${saveNote.noteDescription}" rows="5" maxlength="1000" required></textarea>
                                             </div>
                                             <button id="noteSubmit" type="submit" class="d-none"></button>
                                         </form>
@@ -205,6 +208,13 @@
                 $('#note-id').val(noteId ? noteId : '');
                 $('#note-title').val(noteTitle ? noteTitle : '');
                 $('#note-description').val(noteDescription ? noteDescription : '');
+
+                if (noteId == null) {
+                    $('.modal-body form').attr('action', '/home/note/add');
+                } else {
+                    $('.modal-body form').attr('action', '/home/note/edit');
+                }
+
                 $('#noteModal').modal('show');
             }
 
