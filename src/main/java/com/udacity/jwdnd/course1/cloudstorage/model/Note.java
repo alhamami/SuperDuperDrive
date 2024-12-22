@@ -14,6 +14,7 @@ public class Note {
         this.userid = userid;
     }
 
+
     public Integer getNoteid() {
         return noteid;
     }
