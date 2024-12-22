@@ -23,7 +23,7 @@ public class UserService {
         return userMapper.getUserByUsername(username) == null;
     }
 
-    public int createUser(User user) {
+    public int saveUser(User user) {
 
         SecureRandom random = new SecureRandom();
         byte[] salt = new byte[16];
