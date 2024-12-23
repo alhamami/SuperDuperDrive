@@ -150,9 +150,9 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                <tr th:each="credential : ${credentials}">
+                                <tr th:each="credential, iterStat : ${credentials}">
                                     <td>
-                                        <button type="button" class="btn btn-success" th:onclick="showCredentialModal([[${credential.credentialid}]], [[${credential.url}]], [[${credential.username}]], [[${decryptedCredentials.password}]])">Edit</button>
+                                        <button type="button" class="btn btn-success" th:onclick="showCredentialModal([[${credential.credentialid}]], [[${credential.url}]], [[${credential.username}]], [[${decryptedCredentials[iterStat.index].password}]])">Edit</button>
                                         <a class="btn btn-danger" th:href="@{/home/credential/delete/{credentialid}(credentialid=${credential.credentialid})}">Delete</a>
                                     </td>
                                     <th scope="row" th:text="${credential.url}"></th>
@@ -239,7 +239,7 @@
                 $('#credentialModal').modal('show');
             }
 
-            if()
+
         </script>
     </body>
 </html>
