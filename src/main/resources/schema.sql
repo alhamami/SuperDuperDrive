@@ -30,6 +30,7 @@ CREATE TABLE CREDENTIALS (
     url VARCHAR,
     username VARCHAR,
     password VARCHAR,
+    keySecret VARCHAR,
     userid INT,
     foreign key (userid) references USERS(userid)
 );
