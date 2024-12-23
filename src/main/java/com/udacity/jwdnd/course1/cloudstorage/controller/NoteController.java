@@ -1,12 +1,15 @@
 package com.udacity.jwdnd.course1.cloudstorage.controller;
 
+import com.udacity.jwdnd.course1.cloudstorage.model.Credential;
 import com.udacity.jwdnd.course1.cloudstorage.model.Note;
+import com.udacity.jwdnd.course1.cloudstorage.services.CredentialService;
 import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
 import com.udacity.jwdnd.course1.cloudstorage.services.NoteService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import com.udacity.jwdnd.course1.cloudstorage.services.CredentialService;
 
 @Controller
 @RequestMapping("/home/note")
@@ -15,14 +18,16 @@ public class NoteController {
 
     private final NoteService noteService;
     private final FileService fileService;
+    private final CredentialService credentialService;
 
-    public NoteController(NoteService noteService,  FileService fileService) {
+    public NoteController(NoteService noteService,  FileService fileService, CredentialService credentialService) {
         this.noteService = noteService;
         this.fileService = fileService;
+        this.credentialService = credentialService;
     }
 
     @PostMapping("/add")
-    public String addNote(@ModelAttribute("saveNote") Note saveNote, Authentication authentication, Model model) {
+    public String addNote(@ModelAttribute("saveNote") Note saveNote, @ModelAttribute("saveCredential") Credential saveCredential, Authentication authentication, Model model) {
 
         String noteStatus = null;
 
@@ -42,6 +47,9 @@ public class NoteController {
 
         model.addAttribute("notes", noteService.getAllNotes(authentication.getName()));
         model.addAttribute("files", fileService.getAllFiles(authentication.getName()));
+        model.addAttribute("credentials", credentialService.getAllCredentials(authentication.getName()));
+        model.addAttribute("decryptedCredentials", credentialService.getAllDecryptedCredentials(authentication.getName()));
+
 
 
         return "home";
@@ -50,7 +58,7 @@ public class NoteController {
 
 
     @GetMapping("/delete/{noteid}")
-    public String deleteNote(@ModelAttribute("saveNote") Note saveNote, @PathVariable("noteid") Integer noteid, Authentication authentication, Model model) {
+    public String deleteNote(@ModelAttribute("saveNote") Note saveNote, @ModelAttribute("saveCredential") Credential saveCredential, @PathVariable("noteid") Integer noteid, Authentication authentication, Model model) {
 
         boolean isNoteDeleted = noteService.deleteNote(noteid, authentication.getName());
 
@@ -60,6 +68,9 @@ public class NoteController {
 
         model.addAttribute("notes", noteService.getAllNotes(authentication.getName()));
         model.addAttribute("files", fileService.getAllFiles(authentication.getName()));
+        model.addAttribute("credentials", credentialService.getAllCredentials(authentication.getName()));
+        model.addAttribute("decryptedCredentials", credentialService.getAllDecryptedCredentials(authentication.getName()));
+
 
 
         return "home";
@@ -67,7 +78,7 @@ public class NoteController {
 
 
     @PostMapping("/edit")
-    public String editNote(@ModelAttribute("saveNote") Note saveNote, Authentication authentication, Model model) {
+    public String editNote(@ModelAttribute("saveNote") Note saveNote, @ModelAttribute("saveCredential") Credential saveCredential, Authentication authentication, Model model) {
 
         String noteStatus = null;
 
@@ -87,6 +98,9 @@ public class NoteController {
 
         model.addAttribute("notes", noteService.getAllNotes(authentication.getName()));
         model.addAttribute("files", fileService.getAllFiles(authentication.getName()));
+        model.addAttribute("credentials", credentialService.getAllCredentials(authentication.getName()));
+        model.addAttribute("decryptedCredentials", credentialService.getAllDecryptedCredentials(authentication.getName()));
+
 
 
         return "home";
