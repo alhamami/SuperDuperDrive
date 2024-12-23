@@ -6,7 +6,9 @@ import com.udacity.jwdnd.course1.cloudstorage.model.Note;
 import com.udacity.jwdnd.course1.cloudstorage.model.User;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 @Service
@@ -24,12 +26,18 @@ public class CredentialService {
 
     public boolean saveCredential(Credential credential, String username){
 
+        SecureRandom randomSecret = new SecureRandom();
+        byte[] keySecretByte = new byte[16];
 
         User user = userService.getUserByUsername(username);
         credential.setUserid(user.getUserid());
 
-        String encryptedPassword = encryptionService.encryptValue(credential.getPassword(), generateKey(user.getUserid().toString()));
+        randomSecret.nextBytes(keySecretByte);
+        String keySecret = Base64.getEncoder().encodeToString(keySecretByte);
+        String encryptedPassword = encryptionService.encryptValue(credential.getPassword(), keySecret);
+
         credential.setPassword(encryptedPassword);
+        credential.setKeySecret(keySecret);
         int savedCredential = credentialMapper.saveCredential(credential);
 
         return savedCredential > 0;
@@ -47,7 +55,7 @@ public class CredentialService {
         List<Credential> credentials = credentialMapper.getAllCredentials(username);
 
         for (Credential credential : credentials) {
-            String decryptedPassword = encryptionService.decryptValue(credential.getPassword(), generateKey(credential.getUserid().toString()));
+            String decryptedPassword = encryptionService.decryptValue(credential.getPassword(), credential.getKeySecret());
             credential.setPassword(decryptedPassword);
             decryptedCredentials.add(credential);
         }
@@ -69,23 +77,5 @@ public class CredentialService {
         return editedCredential > 0;
     }
 
-    private String generateKey(String userid){
 
-        String generatedKey = "";
-
-        if (userid.length() < 16) {
-
-            StringBuilder keyBuffer = new StringBuilder(userid);
-
-            while(keyBuffer.length() < 16) {
-                keyBuffer.append("0");
-            }
-            generatedKey = keyBuffer.toString();
-        }else{
-            generatedKey = userid.substring(0, 16);
-        }
-
-        return generatedKey;
-
-    }
 }
