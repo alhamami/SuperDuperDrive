@@ -1,5 +1,6 @@
 package com.udacity.jwdnd.course1.cloudstorage;
 
+import com.udacity.jwdnd.course1.cloudstorage.services.HashService;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
@@ -14,13 +15,23 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 
 import java.io.File;
 import java.time.Duration;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CloudStorageApplicationTests {
+
+	private FilesPage filesPage;
+
+	private NotesPage notesPage;
+
+	private CredentialsPage credentialsPage;
+
+
 
 	@LocalServerPort
 	private int port;
 
 	private WebDriver driver;
+
 
 	@BeforeAll
 	static void beforeAll() {
@@ -29,7 +40,16 @@ class CloudStorageApplicationTests {
 
 	@BeforeEach
 	public void beforeEach() {
+
 		this.driver = new ChromeDriver();
+
+		driver.get("http://localhost:" + port + "/login");
+
+		filesPage = new FilesPage(driver);
+
+		notesPage = new NotesPage(driver);
+
+		credentialsPage = new CredentialsPage(driver);
 	}
 
 	@AfterEach
@@ -199,6 +219,200 @@ class CloudStorageApplicationTests {
 		}
 		Assertions.assertFalse(driver.getPageSource().contains("HTTP Status 403 – Forbidden"));
 
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+	@Test
+	public void testUnauthorizedAccess() {
+
+		driver.get("http://localhost:" + port + "/home");
+
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(100));
+
+		wait.until(driver -> driver.getCurrentUrl().contains("login"));
+
+		Assertions.assertTrue(driver.getCurrentUrl().contains("login"));
+	}
+
+	@Test
+	public void testAnauthorizedLoginAccess() {
+
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(100));
+
+		wait.until(driver -> driver.getCurrentUrl().contains("login"));
+
+		Assertions.assertTrue(driver.getCurrentUrl().contains("login"));
+	}
+
+	@Test
+	public void testAnauthorizedSignUpAccess() {
+
+		driver.get("http://localhost:" + port + "/signup");
+
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(100));
+
+		wait.until(driver -> driver.getCurrentUrl().contains("signup"));
+
+		Assertions.assertTrue(driver.getCurrentUrl().contains("signup"));
+	}
+
+
+
+
+	@Test
+	public void testUnauthorizedAccessToHomeAfterLogOut() {
+
+		driver.get("http://localhost:" + port + "/signup");
+
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(100));
+
+
+		wait.until(driver -> driver.getCurrentUrl().contains("signup"));
+
+
+		doMockSignUp("jalal", "alhamami", "jalhamami", "jalal2024");
+
+		driver.get("http://localhost:" + port + "/login");
+
+		wait.until(driver -> driver.getCurrentUrl().contains("login"));
+
+
+		doLogIn("jalhamami", "jalal2024");
+
+		wait.until(driver -> driver.getCurrentUrl().contains("home"));
+
+		Assertions.assertTrue(filesPage.isDisplayed());
+
+
+		filesPage.logout();
+
+		driver.get("http://localhost:" + port + "/home");
+
+		wait.until(driver -> driver.getCurrentUrl().contains("login"));
+
+		Assertions.assertTrue(driver.getCurrentUrl().contains("login"));
+	}
+
+
+
+	@Test
+	public void testCreatedNote() {
+
+		doLogIn("jalhamami", "jalal2024");
+
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(100));
+
+		wait.until(driver -> driver.getCurrentUrl().contains("home"));
+
+		notesPage.createNote("Math exam", "I have math exam on Monday");
+
+		Assertions.assertTrue(notesPage.isNoteDisplayed("Math exam", "I have math exam on Monday"));
+	}
+
+
+	@Test
+	public void testEditNote() {
+		doLogIn("jalhamami", "jalal2024");
+
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(100));
+
+		wait.until(driver -> driver.getCurrentUrl().contains("home"));
+
+		notesPage.createNote("Math exam", "I have math exam on Thursday");
+
+		Assertions.assertTrue(notesPage.isNoteDisplayed("Math exam", "I have math exam on Thursday"));
+
+		notesPage.editNote("Geography exam", "I have geography exam on Thursday");
+
+		Assertions.assertTrue(notesPage.isNoteDisplayed("Geography exam", "I have geography exam on Thursday"));
+	}
+
+	@Test
+	public void testDeleteNote() {
+
+		doLogIn("jalhamami", "jalal2024");
+
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(100));
+
+		wait.until(driver -> driver.getCurrentUrl().contains("home"));
+
+		notesPage.createNote("Math exam", "I have math exam on Friday");
+
+		Assertions.assertTrue(notesPage.isNoteDisplayed("Math exam", "I have math exam on Friday"));
+
+		notesPage.deleteNote();
+
+		Assertions.assertFalse(notesPage.isNoteDisplayed("Math exam", "I have math exam on Friday"));
+	}
+
+
+	@Test
+	public void testCreatedCredential() {
+
+		doLogIn("jalhamami", "jalal2024");
+
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(100));
+
+		wait.until(driver -> driver.getCurrentUrl().contains("home"));
+
+		credentialsPage.createCredential("www.google.com", "jalal", "jalal2024");
+
+		Assertions.assertTrue(credentialsPage.isCredentialDisplayed("www.google.com", "jalal", "jalal2024"));
+
+		Assertions.assertTrue(credentialsPage.isCredentialPasswordEncrypted("jalal2024"));
+
+	}
+
+
+	@Test
+	public void testEditCredential() {
+		doLogIn("jalhamami", "jalal2024");
+
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(200));
+
+		wait.until(driver -> driver.getCurrentUrl().contains("home"));
+
+		credentialsPage.createCredential("www.google.com", "jalal", "jalal2024");
+
+		Assertions.assertTrue(credentialsPage.isCredentialDisplayed("www.google.com", "jalal", "jalal2024"));
+
+
+		Assertions.assertTrue(credentialsPage.isCredentialPasswordDecrypted("jalal2024"));
+
+		credentialsPage.editCredential("www.yahoo.com", "jalal", "jalal2024");
+
+		Assertions.assertTrue(credentialsPage.isCredentialDisplayed("www.yahoo.com", "jalal", "jalal2024"));
+
+
+	}
+
+	@Test
+	public void testDeleteCredential() {
+
+		doLogIn("jalhamami", "jalal2024");
+
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(100));
+
+		wait.until(driver -> driver.getCurrentUrl().contains("home"));
+
+		credentialsPage.createCredential("www.google.com", "jalal", "jalal2024");
+
+		Assertions.assertTrue(credentialsPage.isCredentialDisplayed("www.google.com", "jalal", "jalal2024"));
+
+		credentialsPage.deleteCredential();
+
+		Assertions.assertFalse(credentialsPage.isCredentialDisplayed("www.google.com", "jalal", "jalal2024"));
 	}
 
 
