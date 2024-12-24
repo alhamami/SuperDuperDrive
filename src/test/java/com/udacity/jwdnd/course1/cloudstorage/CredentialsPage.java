@@ -1,6 +1,7 @@
 package com.udacity.jwdnd.course1.cloudstorage;
 
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -8,7 +9,7 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
+import java.util.List;
 import java.time.Duration;
 
 
@@ -84,14 +85,48 @@ public class CredentialsPage {
 
         jsExecutor.executeScript("arguments[0].click();", credentialsSection);
 
-        String credentialUrlValue = createdCredentialUrl.getAttribute("innerHTML");
-        String credentialUsernameValue = createdCredentialUsername.getAttribute("innerHTML");
-        String credentialPasswordValue = createdCredentialPassword.getAttribute("innerHTML");
+        String lastCredentialUrlValue = null;
+        String credentialUsernameValue = null;
+        String credentialPasswordValue = null;
+
+        WebDriverWait webDriverWait = new WebDriverWait(webDriver, Duration.ofSeconds(2));
+        try{
+
+            webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("createdCredentialUrl")));
 
 
 
 
-        boolean isCredential = credentialUrlValue.equals(url) && credentialUsernameValue.equals(username) && !(credentialPasswordValue.equals(password));
+            List<WebElement> credentialUrls = webDriver.findElements(By.id("createdCredentialUrl"));
+
+
+            if (!credentialUrls.isEmpty()) {
+
+                WebElement lastCredentialUrl = credentialUrls.getLast();
+
+                 lastCredentialUrlValue = lastCredentialUrl.getText();
+            } else {
+                 lastCredentialUrlValue = "";
+
+            }
+            credentialUsernameValue = createdCredentialUsername.getAttribute("innerHTML");
+            credentialPasswordValue = createdCredentialPassword.getAttribute("innerHTML");
+
+
+        }catch(Exception e){
+            lastCredentialUrlValue = "";
+            credentialUsernameValue = "";
+            credentialPasswordValue = "";
+            e.printStackTrace();
+        }
+
+
+
+
+
+
+
+        boolean isCredential = lastCredentialUrlValue.equals(url) && credentialUsernameValue.equals(username) && !(credentialPasswordValue.equals(password));
 
 
         return isCredential;
