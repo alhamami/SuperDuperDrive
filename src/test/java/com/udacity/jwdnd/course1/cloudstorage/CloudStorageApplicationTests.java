@@ -281,14 +281,14 @@ class CloudStorageApplicationTests {
 		wait.until(driver -> driver.getCurrentUrl().contains("signup"));
 
 
-		doMockSignUp("jalal", "alhamami", "jalhamami", "jalal2024");
+		doMockSignUp("AccessToHome","AfterLogOut","ATH","123");
 
 		driver.get("http://localhost:" + port + "/login");
 
 		wait.until(driver -> driver.getCurrentUrl().contains("login"));
 
 
-		doLogIn("jalhamami", "jalal2024");
+		doLogIn("ATH", "123");
 
 		wait.until(driver -> driver.getCurrentUrl().contains("home"));
 
@@ -309,7 +309,9 @@ class CloudStorageApplicationTests {
 	@Test
 	public void testCreatedNote() {
 
-		doLogIn("jalhamami", "jalal2024");
+		doMockSignUp("Create","Note","TCN","123");
+
+		doLogIn("TCN", "123");
 
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(100));
 
@@ -323,7 +325,10 @@ class CloudStorageApplicationTests {
 
 	@Test
 	public void testEditNote() {
-		doLogIn("jalhamami", "jalal2024");
+
+		doMockSignUp("Edit","Note","TEN","123");
+
+		doLogIn("TEN", "123");
 
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(100));
 
@@ -341,7 +346,9 @@ class CloudStorageApplicationTests {
 	@Test
 	public void testDeleteNote() {
 
-		doLogIn("jalhamami", "jalal2024");
+		doMockSignUp("testDelete","Note","TDN","123");
+
+		doLogIn("TDN", "123");
 
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(100));
 
@@ -360,7 +367,10 @@ class CloudStorageApplicationTests {
 	@Test
 	public void testCreatedCredential() {
 
-		doLogIn("jalhamami", "jalal2024");
+		doMockSignUp("Create","Credential","TCC","123");
+
+
+		doLogIn("TCC", "123");
 
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(100));
 
@@ -377,7 +387,10 @@ class CloudStorageApplicationTests {
 
 	@Test
 	public void testEditCredential() {
-		doLogIn("jalhamami", "jalal2024");
+
+		doMockSignUp("Edit","Credential","TEC","123");
+
+		doLogIn("TEC", "123");
 
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(200));
 
@@ -400,7 +413,9 @@ class CloudStorageApplicationTests {
 	@Test
 	public void testDeleteCredential() {
 
-		doLogIn("jalhamami", "jalal2024");
+		doMockSignUp("Delete","Credential","TDC","123");
+
+		doLogIn("TDC", "123");
 
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(100));
 
@@ -409,6 +424,7 @@ class CloudStorageApplicationTests {
 		credentialsPage.createCredential("www.google.com", "jalal", "jalal2024");
 
 		Assertions.assertTrue(credentialsPage.isCredentialDisplayed("www.google.com", "jalal", "jalal2024"));
+
 
 		credentialsPage.deleteCredential();
 
