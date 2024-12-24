@@ -55,9 +55,15 @@ public class CredentialService {
         List<Credential> credentials = credentialMapper.getAllCredentials(username);
 
         for (Credential credential : credentials) {
-            String decryptedPassword = encryptionService.decryptValue(credential.getPassword(), credential.getKeySecret());
-            credential.setPassword(decryptedPassword);
-            decryptedCredentials.add(credential);
+            if(credential != null){
+                if(credential.getPassword() != null && credential.getKeySecret() != null){
+                    String decryptedPassword = encryptionService.decryptValue(credential.getPassword(), credential.getKeySecret());
+                    credential.setPassword(decryptedPassword);
+                    decryptedCredentials.add(credential);
+                }
+
+            }
+
         }
 
         return decryptedCredentials;
@@ -71,6 +77,16 @@ public class CredentialService {
     }
 
     public boolean editCredential(Credential credential){
+
+        Credential cred = credentialMapper.getCredential(credential.getUsername());
+
+        credential.setUserid(cred.getUserid());
+
+
+        String encryptedPassword = encryptionService.encryptValue(credential.getPassword(), cred.getKeySecret());
+
+        credential.setPassword(encryptedPassword);
+        credential.setKeySecret(cred.getKeySecret());
 
         int editedCredential = credentialMapper.editCredential(credential);
 
