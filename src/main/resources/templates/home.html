@@ -25,7 +25,7 @@
                 </nav>
                 <div class="tab-content" id="nav-tabContent">
                     <div class="tab-pane fade show active" id="nav-files" role="tabpanel" aria-labelledby="nav-files-tab">
-                        <form  th:action="@{'/home/file/upload'}" enctype="multipart/form-data" method="POST">
+                        <form  id="uploadFileForm" th:action="@{'/home/file/upload'}" enctype="multipart/form-data" method="POST">
                             <div class="container">
                                 <div class="row" style="margin: 1em;">
                                     <div class="col-sm-2">
@@ -40,7 +40,10 @@
                                 </div>
                                 <div class="row" style="margin: 1em;">
                                     <div class="col-sm-5">
-                                        <div th:if="${fileSaveStatus}"  class="alert alert-danger" style="text-align: center" th:text="${fileSaveStatus}">
+                                        <div th:if="${fileSaveStatus}"  class="alert alert-info" style="text-align: center" th:text="${fileSaveStatus}">
+                                        </div>
+                                        <div id="fileError" class="alert alert-danger" style="text-align: center; display: none;" >
+                                            Please select a file!
                                         </div>
                                     </div>
                                 </div>
@@ -72,7 +75,8 @@
                             + Add a New Note
                         </button>
                         <div class="col-sm-5">
-                            <div th:if="${noteStatus}"  class="alert alert-danger" style="text-align: center" th:text="${noteStatus}">
+                            <br>
+                            <div th:if="${noteStatus}"  class="alert alert-info" style="text-align: center" th:text="${noteStatus}">
                             </div>
                         </div>
 
@@ -135,7 +139,7 @@
                         </button>
 
                         <div class="col-sm-5" style="margin-top: 1%" >
-                            <div th:if="${credentialStatus}"  class="alert alert-danger" style="text-align: center" th:text="${credentialStatus}">
+                            <div th:if="${credentialStatus}"  class="alert alert-info" style="text-align: center" th:text="${credentialStatus}">
                             </div>
                         </div>
 
@@ -238,6 +242,23 @@
 
                 $('#credentialModal').modal('show');
             }
+
+
+            document.getElementById("uploadFileForm").onsubmit = function(event) {
+
+                const file = document.getElementById("fileUpload");
+                const fileError = document.getElementById("fileError");
+
+
+                if (file.files.length === 0) {
+
+                    event.preventDefault();
+
+                    fileError.style.display = "block";
+                } else {
+                    fileError.style.display = "none";
+                }
+            };
 
 
         </script>
