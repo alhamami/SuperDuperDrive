@@ -78,10 +78,10 @@ public class CredentialService {
 
     public boolean editCredential(Credential credential){
 
-        Credential cred = credentialMapper.getCredential(credential.getUsername());
+
+        Credential cred = credentialMapper.getCredential(credential.getCredentialid());
 
         credential.setUserid(cred.getUserid());
-
 
         String encryptedPassword = encryptionService.encryptValue(credential.getPassword(), cred.getKeySecret());
 
