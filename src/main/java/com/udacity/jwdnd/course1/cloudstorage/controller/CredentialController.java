@@ -54,7 +54,7 @@ public class CredentialController {
     }
 
     @GetMapping("/delete/{credentialid}")
-    public String deleteNote(@ModelAttribute("saveNote") Note saveNote,  @ModelAttribute("saveCredential") Credential saveCredential, @PathVariable("credentialid") Integer credentialid, Authentication authentication, Model model) {
+    public String deleteCredential(@ModelAttribute("saveNote") Note saveNote,  @ModelAttribute("saveCredential") Credential saveCredential, @PathVariable("credentialid") Integer credentialid, Authentication authentication, Model model) {
 
         boolean isCredentialDeleted = credentialService.deleteCredential(credentialid, authentication.getName());
 
@@ -74,7 +74,7 @@ public class CredentialController {
 
 
     @PostMapping("/edit")
-    public String editNote(@ModelAttribute("saveNote") Note saveNote, @ModelAttribute("saveCredential") Credential saveCredential, Authentication authentication, Model model) {
+    public String editCredential(@ModelAttribute("saveNote") Note saveNote, @ModelAttribute("saveCredential") Credential saveCredential, Authentication authentication, Model model) {
 
         String credentialStatus = null;
 
