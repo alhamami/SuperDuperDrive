@@ -48,7 +48,7 @@ public class FileController {
     @PostMapping("/upload")
     public String uploadFile(@ModelAttribute("saveNote") Note saveNote, @ModelAttribute("saveCredential") Credential saveCredential, @RequestParam("fileUpload") MultipartFile uploadFile, Authentication authentication, Model model) throws IOException {
 
-        String fileSaveStatus = null;
+        String fileSaveStatus = "File Uploaded successfully";
 
         if(!fileService.isFileExist(uploadFile.getOriginalFilename(), authentication.getName())){
 
@@ -78,11 +78,17 @@ public class FileController {
     @GetMapping("/delete/{fileId}")
     public String deleteFile(@ModelAttribute("saveNote") Note saveNote, @ModelAttribute("saveCredential") Credential saveCredential, @PathVariable("fileId") Integer fileId, Authentication authentication, Model model){
 
+        String fileSaveStatus = "File deleted successfully";
+
         boolean isFileDeleted = fileService.deleteFile(fileId, authentication.getName());
 
         if(!isFileDeleted){
-            model.addAttribute("fileSaveStatus", "an error occurred while deleting the file");
+
+            fileSaveStatus = "an error occurred while deleting the file";
         }
+
+        model.addAttribute("fileSaveStatus", fileSaveStatus);
+
 
         model.addAttribute("notes", noteService.getAllNotes(authentication.getName()));
         model.addAttribute("files", fileService.getAllFiles(authentication.getName()));
