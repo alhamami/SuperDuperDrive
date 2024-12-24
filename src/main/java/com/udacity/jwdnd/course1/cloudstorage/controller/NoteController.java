@@ -29,7 +29,7 @@ public class NoteController {
     @PostMapping("/add")
     public String addNote(@ModelAttribute("saveNote") Note saveNote, @ModelAttribute("saveCredential") Credential saveCredential, Authentication authentication, Model model) {
 
-        String noteStatus = null;
+        String noteStatus = "Note added successfully";
 
         if(saveNote != null) {
 
@@ -60,11 +60,16 @@ public class NoteController {
     @GetMapping("/delete/{noteid}")
     public String deleteNote(@ModelAttribute("saveNote") Note saveNote, @ModelAttribute("saveCredential") Credential saveCredential, @PathVariable("noteid") Integer noteid, Authentication authentication, Model model) {
 
+        String noteStatus = "Note deleted successfully";
+
         boolean isNoteDeleted = noteService.deleteNote(noteid, authentication.getName());
 
         if(!isNoteDeleted){
-            model.addAttribute("noteStatus", "an error occurred while deleting the note");
+
+            noteStatus = "an error occurred while deleting the note";
+            model.addAttribute("noteStatus", noteStatus);
         }
+        model.addAttribute("noteStatus", noteStatus);
 
         model.addAttribute("notes", noteService.getAllNotes(authentication.getName()));
         model.addAttribute("files", fileService.getAllFiles(authentication.getName()));
@@ -80,7 +85,7 @@ public class NoteController {
     @PostMapping("/edit")
     public String editNote(@ModelAttribute("saveNote") Note saveNote, @ModelAttribute("saveCredential") Credential saveCredential, Authentication authentication, Model model) {
 
-        String noteStatus = null;
+        String noteStatus = "Note edited successfully";
 
         if(saveNote != null) {
 
